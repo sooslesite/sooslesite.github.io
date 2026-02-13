@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soosle Firefox Search</title>
+<style>
+  body { margin:0; font-family: Arial,sans-serif; background:#1a1a1a; color:#e8eaed; }
+  /* Tabs bar - Firefox style */
+  .tabs-bar { display:flex; align-items:center; background:#2f2f38; padding:4px; overflow-x:auto; }
+  .logo { font-weight:bold; color:#ff9400; margin-right:12px; font-size:16px; white-space:nowrap; cursor:default; }
+  .tabs { display:flex; overflow-x:auto; flex:1; }
+  .tab { padding:8px 16px; margin-right:2px; cursor:pointer; background:#2f2f38; border-radius:8px 8px 0 0; position:relative; white-space:nowrap; }
+  .tab.active { background:#4b69af; color:white; }
+  .tab:hover { background:#3c3f51; }
+  .tab .close { position:absolute; right:4px; top:4px; font-weight:bold; color:#ccc; cursor:pointer; }
+  .tab .close:hover { color:white; }
+  /* Address bar */
+  .address-bar { display:flex; padding:6px; background:#33334d; gap:4px; align-items:center; }
+  .address-bar input { flex:1; padding:6px 12px; border-radius:24px; border:none; background:#40405a; color:#e8eaed; }
+  .address-bar button { padding:6px 12px; border:none; border-radius:12px; background:#40405a; color:#e8eaed; cursor:pointer; }
+  /* Home content */
+  .home { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; }
+  .home h1 { font-size:72px; margin-bottom:24px; color:#ff9400; }
+  .home input[type=text] { width:300px; max-width:90%; padding:10px 16px; border-radius:24px; border:none; background:#40405a; color:#e8eaed; }
+  .home .buttons { margin-top:20px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .home button { padding:10px 20px; border:none; border-radius:6px; background:#40405a; color:#e8eaed; cursor:pointer; }
+  .shortcuts { margin-top:40px; display:grid; grid-template-columns:repeat(auto-fit,minmax(80px,1fr)); gap:16px; max-width:600px; }
+  .shortcut { display:flex; flex-direction:column; align-items:center; cursor:pointer; }
+  .shortcut div { width:60px; height:60px; background:#40405a; display:flex; align-items:center; justify-content:center; border-radius:12px; margin-bottom:6px; font-size:24px; }
+  /* Search results */
+  .results { max-width:800px; margin:20px auto; }
+  .result { margin-bottom:24px; }
+  .result a { color:#8ab4f8; font-size:18px; text-decoration:none; }
+  .result a:hover { text-decoration:underline; }
+  .result .url { font-size:12px; color:#9aa0a6; }
+  .result p { font-size:14px; color:#bdc1c6; }
+  /* Footer */
+  footer { text-align:center; padding:12px; font-size:12px; color:#888; opacity:0.8; background:#1a1a1a; border-top:1px solid #3c3f51; margin-top:20px; }
+</style>
+<script async src="https://cse.google.com/cse.js?cx=468c64b2a42334393"></script>
+</head>
+<body>
+
+<!-- Tabs bar -->
+<div class="tabs-bar">
+  <div class="logo">Soosle – Made by Kingston D</div>
+  <div class="tabs">
+    <div class="tab active">New Tab <span class="close" onclick="closeTab(event)">×</span></div>
+    <div class="tab" onclick="addTab()">+</div>
+  </div>
+</div>
+
+<!-- Address bar -->
+<div class="address-bar">
+  <input type="text" id="addressInput" placeholder="Search or enter URL">
+  <button onclick="goHome()">🏠</button>
+  <button onclick="search()">🔍</button>
+</div>
+
+<!-- Home content -->
+<div class="home" id="homeContent">
+  <h1>Soosle</h1>
+  <input type="text" id="homeSearch" placeholder="Search Soosle or type a URL">
+  <div class="buttons">
+    <button onclick="search()">Soosle Search</button>
+    <button onclick="luckySearch()">I'm Feeling Lucky</button>
+  </div>
+  <div class="shortcuts">
+    <div class="shortcut" onclick="openSite('https://youtube.com')"><div>▶</div>YouTube</div>
+    <div class="shortcut" onclick="openSite('https://gmail.com')"><div>✉</div>Gmail</div>
+    <div class="shortcut" onclick="openSite('https://drive.google.com')"><div>▲</div>Drive</div>
+    <div class="shortcut" onclick="openSite('https://calendar.google.com')"><div>📅</div>Calendar</div>
+  </div>
+</div>
+
+<!-- Search results -->
+<div class="results" id="resultsContent" style="display:none;">
+  <div class="gcse-searchresults-only"></div>
+</div>
+
+<!-- Footer -->
+<footer>
+  © 2026 Kingston D
+</footer>
+
+<script>
+  // Tabs
+  function addTab() {
+    const tabBar = document.querySelector('.tabs');
+    const newTab = document.createElement('div');
+    newTab.className = 'tab active';
+    newTab.innerHTML = 'New Tab <span class="close" onclick="closeTab(event)">×</span>';
+    newTab.onclick = () => selectTab(newTab);
+    tabBar.insertBefore(newTab, tabBar.lastElementChild);
+    selectTab(newTab);
+  }
+  function closeTab(e) {
+    e.stopPropagation();
+    const tab = e.target.closest('.tab');
+    if(tab) tab.remove();
+  }
+  function selectTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    goHome();
+  }
+
+  // Address bar / search
+  function goHome() {
+    document.getElementById('homeContent').style.display='flex';
+    document.getElementById('resultsContent').style.display='none';
+  }
+  function search() {
+    const query = document.getElementById('homeSearch').value.trim();
+    if(!query) return;
+    const address = document.getElementById('addressInput');
+    address.value = query;
+    document.getElementById('homeContent').style.display='none';
+    document.getElementById('resultsContent').style.display='block';
+  }
+  function luckySearch() {
+    const query = document.getElementById('homeSearch').value.trim();
+    if(!query) return;
+    window.open('https://www.google.com/search?q='+encodeURIComponent(query)+'&btnI','_blank');
+  }
+  function openSite(url) {
+    window.open(url,'_blank');
+  }
+</script>
+
+</body>
+</html>
